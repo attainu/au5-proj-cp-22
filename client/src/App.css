@@ -1,0 +1,277 @@
+@import url('https://fonts.googleapis.com/css2?family=Grand+Hotel&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@1,700&display=swap');
+
+/* background: linear-gradient(to bottom right,#F87E7B,#B05574); */
+
+a{
+  color:black !important
+}
+
+.brand-logo,h2 {
+  font-family: 'Grand Hotel', cursive;
+}
+
+/* rgb(238, 238, 16)  rgb(240, 163, 21)*/
+.logo{
+  /* background: linear-gradient(to right,rgb(25, 124, 180),rgb(89, 190, 230),rgb(25, 124, 180)); */
+  background-image:linear-gradient(to left, orange,rgb(224, 97, 224), rgb(233, 15, 51), red); 
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 145%;
+  /* color:black; */
+  margin-top:0;
+  margin-right: 140px;
+  font-size:40px;
+  
+
+
+}
+
+p{
+  font-size:large;
+}
+#nav-mobile{
+  font-size:larger;
+}
+
+.card{
+  margin-top: 10px !important;
+}
+
+
+.mycard,button{
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-around;
+  
+
+}
+.auth-card{
+  padding:30px;
+  text-align: center;
+  max-width: 500px;
+  margin:100px auto;
+  border-radius:3%;
+  
+  
+ 
+  
+}
+
+
+.input-field input[type=text]:focus {
+  border-bottom: 1px solid rgb(71, 82, 240) !important;
+  box-shadow: 0 1px 0 0 rgb(57, 103, 230) !important;
+}
+
+.input-field input[type=password]:focus {
+  border-bottom: 1px solid rgb(71, 82, 240) !important;
+  box-shadow: 0 1px 0 0 rgb(57, 103, 230) !important;
+}
+
+.login{
+  margin-right: 150px;
+  /* background: linear-gradient(to bottom right,#F87E7B,#B05574);
+  color:white !important; */
+  
+}
+
+/* .file-field input[type=file] {
+  position: relative;
+} */
+.showP{
+  margin-right: 296px;
+}
+
+
+#toast-container{
+  top:60px !important; 
+  right:50px !important;
+  left:auto !important;
+  /* width:100%; */
+  
+
+}
+#toast-container html{
+  text-align:center !important;
+}
+
+.my-facebook-button-class{
+  background-color: white;
+  color:rgba(45, 86, 199, 0.918);
+  font-size: larger;
+  /* font-weight:bold; */
+  font-family: 'Times New Roman';
+  border:hidden;
+  border-left:15px;
+  margin-top: auto;
+  margin-left: 100px;
+}
+.my-facebook-button-class:focus{
+  background-color: white;
+}
+
+icon{
+  margin-right: 10px;
+}
+
+.hh {
+  overflow: hidden;
+  text-align: center;
+  color:rgb(165, 158, 158);
+} 
+
+.hh:before,
+.hh:after {
+  background-color: rgb(167, 161, 161);
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 50%;
+  
+}
+
+.hh:before {
+  right: 0.2em;
+  margin-left: -10%;
+}
+
+.hh:after {
+  left: 0.2em;
+  margin-right: -10%;
+} 
+
+mark{
+  color:rgb(69, 104, 202);
+  background-color: white;
+  font-family: sans-serif;
+}
+button{
+  border-radius:5px;
+  
+}
+
+h2{
+  /* background: linear-gradient(to right,rgb(25, 124, 180),rgb(89, 190, 230),rgb(25, 124, 180)); */
+    background-image: linear-gradient(to left,rgb(240, 163, 21),rgb(238, 238, 16),rgb(224, 97, 224), rgb(233, 15, 51), orange, red); 
+   -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 145%;
+    /* color:black; */
+  
+}
+
+.gallery{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-around;
+
+}
+
+.item{
+  width:30%;
+  height: 30%;
+}
+
+
+.home-card{
+  max-width: 570px;
+  height:max-content;
+  margin: 26px auto;
+
+  
+}
+
+.mark{
+ font-size: initial;
+ margin-top:0;
+ color: black;
+ font-weight: bold;
+ text-align: left;
+}
+.name{
+  font-weight: bold;
+  font-size: 20px;
+}
+.title{
+  font-weight: lighter;
+  font-size: 15px;
+  color: black;
+}
+
+.logout{
+  margin-top: 0;
+}
+
+.material-icons:hover{
+  cursor:pointer;
+}
+
+.edit{
+  width:100%;
+  margin-top: 2px;
+  border-radius: 15px;
+}
+.edit a{
+  color:white !important;
+}
+
+.login a{
+  color:black !important;
+}
+
+
+.Name{
+  font-family: 'PT Serif', serif;
+}
+
+.follow{
+  font-size:20px; 
+  color:gray;
+  /* background-color: rgb(247, 247, 247); */
+}
+
+.logout a{
+   color: black !important;
+}
+
+.comment{
+  cursor: pointer;
+  font-size: 16px;
+  color:grey;
+  /* font-weight: bold; */
+}
+
+.comment mark{
+  cursor: pointer;
+  font-size: 16px;
+  color:grey;
+}
+
+
+
+.preloader-wrapper{
+  align-content: center;
+}
+
+h6{
+  text-align: center;
+}
+
+.noPost{
+    text-align: center;
+    font-size: 45px;
+    font-family: 'Grand Hotel', cursive;
+    margin-top:10%;
+}
+.com{
+  text-align: left;
+}
+
+
