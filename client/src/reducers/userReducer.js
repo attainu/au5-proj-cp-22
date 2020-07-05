@@ -28,5 +28,17 @@ export const reducer = (state,action)=>{
             email:action.payload.email
         }
     }
+    if(action.type === "GET_CHATS"){
+        return {
+            ...state,
+            chats:action.payload
+        }
+    }
+    if(action.type === "AFTER_POST_MESSAGE"){
+        return {
+            ...state,
+            chats:state.chats.concat(action.payload)
+        }
+    }
     return state
 }
