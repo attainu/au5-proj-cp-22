@@ -36,48 +36,29 @@ const Reset =()=>{
         }).catch(err=>{
             console.log(err)
         })
-    
-    }
+     }
 
     return(
-
-   
-       
-      <div className="mycard">
-        
-          <div id="fb-root"></div>
-       <script async defer crossorigin="anonymous"  style={{marginLeft:"30px"}} src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v7.0&appId=1180841995600946&autoLogAppEvents=1" nonce="PDmfefqu"></script>
-       
-    
-        
-        <div className="card auth-card input-field">
-       
-
-            <h2>Appogram</h2>
-            
+       <div className="mycard">
+       <div className="card auth-card input-field">
+            <h2>Reset password</h2>
             <input type="text"
             placeholder="email"
             value ={email}
             onChange = {(e)=>setEmail(e.target.value)}
             />
-            
-             <button className="login btn waves-effect waves-light #3949ab indigo darken-1"
+            <button className="login btn waves-effect waves-light #26a69a teal lighten-1"
             onClick = {()=>PostData()} >
                 Send Mail
-    
             </button>
             <p>
                 Dont have an account?&nbsp;&nbsp;
                 <Link to="/signup"><mark>Signup</mark></Link>
             </p>
-            
-           
         </div>
-        
-      </div>
+    </div>
      
     )
-
 }
 
 export default Reset

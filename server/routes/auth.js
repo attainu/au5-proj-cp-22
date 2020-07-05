@@ -3,11 +3,12 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
-const {SECRET_KEY} = require('../key')
+const {SECRET_KEY} = require('../../config/key')
 const login = require('../middleware/login')
 const fetch = require('node-fetch')
 const nodemailer = require('nodemailer')
 const sendgridTransport = require('nodemailer-sendgrid-transport')
+const {SEND_GRID} = require('../../config/key')
 
 
 const { response } = require('express')
@@ -15,10 +16,11 @@ const { response } = require('express')
 
 const router = express.Router()
 const user = mongoose.model("user")
+const Message = mongoose.model("message")
 
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth:{
-        api_key:"key",
+        api_key:{SEND_GRID},
     }
 }))
 
@@ -147,23 +149,18 @@ router.post('/facebookLogin',(req,res)=>{
         method:"GET"
     }).then(response => response.json())
     .then(response => {
+        console.log("r",response)
         const {email,name,followers,following,pic} = response;
         console.log("cfgvhb",response)
         user.findOne({email}).exec((err,Users)=>{
             if(err){
                 return res.status(400).json({
-                    error:"somenthing wring"
+                    error:"somenthing wrong"
                 })
             }else{
                 if(Users){
                     console.log(Users)
-                    transporter.sendMail({
-                        to:Users.email,
-                        from:"officialappogram@gmail.com",
-                        subject:"signup success",
-                        html:`<h2>hello <mark>${Users.name}!!</mark> Welcome to Appogram family</h2><h5>You registered through Facebook</h5>`
-                    })
-                    
+                   
                 const token = jwt.sign({_id:Users._id},SECRET_KEY)
                 const {_id,name,email,followers,following,pic} = Users
                 res.json({token,user:{_id,name,email,followers,following,pic}})
@@ -179,6 +176,13 @@ router.post('/facebookLogin',(req,res)=>{
                         }else{
                         const token = jwt.sign({_id:Users._id},SECRET_KEY)
                         const {_id,name,email,followers,following,pic} = Users
+                        transporter.sendMail({
+                            to:Users.email,
+                            from:"officialappogram@gmail.com",
+                            subject:"signup success",
+                            html:`<h2>hello <mark>${Users.name}!!</mark> Welcome to Appogram family</h2><h5>You registered through Facebook</h5>`
+                        })
+                        
                         res.json({token,user:{_id,name,email,followers,following,pic}})
                         }
                     })
@@ -190,6 +194,25 @@ router.post('/facebookLogin',(req,res)=>{
     })
 
 })
+
+router.get("/getChat/:id",login,async (req,res)=>{
+    
+    try {
+        const  userId = req.User._id
+        console.log("user",userId)
+        var friendId = req.params.id
+        const msgs=await Message.find({})
+        const m = msgs.filter(el=>{
+          if ((el.from == userId && el.to == friendId ) || (el.from == friendId && el.to == userId )) {
+              return el
+          }
+        })
+        res.send(m)
+      } catch (err) {
+        console.log(err);
+      }
+})
+
 
 
 module.exports = router

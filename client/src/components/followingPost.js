@@ -1,11 +1,13 @@
 import React,{useState,useEffect,useContext} from 'react'
 import {UserContext} from '../App'
+import Spinner from 'reactjs-simple-spinner'
 import {Link} from 'react-router-dom'
 
 const Home =()=>{
     const [data,setData] = useState([])
     const [show,setShow] = useState(false)
     const {state,dispatch} =useContext(UserContext)
+    const [user,setUsers] = useState([])
     useEffect(()=>{
        fetch("/allpostsofFollowing",{
            methos:"get",
@@ -111,52 +113,60 @@ const deletepost = (postId) =>{
         setData(newData)
     })
 }
-const deletecomment = (postId) =>{
-    fetch(`/deletecomment/${postId}`,{
-        method:"delete",
-        headers:{
-            "Authorization":"Bearer "+localStorage.getItem("jwt")
-        }
-    }).then(res=>res.json())
-    .then(result =>{
-        console.log(result)
-        const newDataComment = data.filter(item=>{
-            return item._id !== result._id
-        })
-        setData(newDataComment)
-    }).catch(err=>{
-        console.log(err)
-    })
-}
-
 const toogle=()=>{
     setShow(!show)
 }
+
+useEffect(()=>{
+    fetch("/following",{
+        methos:"get",
+        headers:{
+            "Authorization":"Bearer "+localStorage.getItem("jwt")
+        }
+    }).then(res =>res.json())
+    .then(result=>{
+        console.log("u",result)
+        setUsers(result.user) 
+    })
+    
+ },[])
     return(
-        <>
-        {!data?
+        // <div className="noPost">no post found...<div> <Link to="/explore" className="page">explore and follow people to see their posts</Link></div></div>
+        <div className="home1">
         <div className="home">
-           
-            {
-                data.map(item =>{
+      
+    
+           <>
+           {data.length===0?<div className="noPost">no post found...<div> <Link to="/explore" className="page">explore and follow people to see their posts</Link></div></div>:
+            data.map(item =>{
+                
                     return(
+                        
                         <div className="card home-card" key={item._id}>
-                        <h5 style={{fontWeight:"bold"}}>
+                           
+                        <h5 style={{fontWeight:"bold",padding:"9px"}}>
                             <Link to={item.postedBy._id !== state._id?"/profile/"+ item.postedBy._id:"/profile"}> 
+                            <div style={{display:"flex",marginTop:"3px",margin:"6px"}}>
                             <img 
-                                    style={{width:"30px",height:"30px",borderRadius:"160px"}} 
-                                    src={item.postedBy.pic}/>&nbsp;{item.postedBy.name}</Link> 
-                                    {item.postedBy._id === state._id && <i className="material-icons" style={{float:"right"}} 
-                                    onClick={()=>deletepost(item._id)}>delete</i>
-                        }</h5>
+                            style={{width:"34px",height:"34px",borderRadius:"160px"}}  
+                            src={item.postedBy.pic}/>&nbsp;{item.postedBy.name}
+                            {item.postedBy._id === state._id && <i  className="icons material-icons" 
+                            style={{float:"right"}} 
+                            onClick={()=>deletepost(item._id)}>
+                            delete
+                            </i>}
+                            </div>
+                           </Link> 
+                                   
+                        </h5>
                         <div className="card-image">
-                            <img src={item.photo}>
+                            <img className="postI" src={item.photo}>
                             </img>
                         </div>
                         <div className="card-content">
                             {item.likes.includes(state._id)
-                            ?<div> <i className="material-icons" style={{color:"red"}}  onClick={()=>unlikePost(item._id)}> favorite</i></div>
-                            :<i className="material-icons" onClick={()=>likePost(item._id)}>favorite_border</i>}
+                            ?<div> <i className="icons material-icons" style={{color:"red"}}  onClick={()=>unlikePost(item._id)}> favorite</i></div>
+                            :<i className="icons material-icons" onClick={()=>likePost(item._id)}>favorite_border</i>}
                            <h6 className="mark">{item.likes.length}&nbsp;liked</h6>
                            <h5 className="name">{item.postedBy.name} &nbsp;<mark className="title">{item.title}</mark></h5>
                            <p className="comment" onClick={()=>toogle()}>view&nbsp;<mark>{item.comments.length}</mark>&nbsp;comments</p> 
@@ -165,7 +175,7 @@ const toogle=()=>{
                                item.comments.map(record=>{
                                    console.log("follow",record)
                                    return(
-                                    <h6 key={record._id}><span style={{fontWeight:"bold"}}> <Link to={record.postedBy._id !== state._id?"/profile/"+ record.postedBy._id:"/profile"}> {record.postedBy.name}</Link></span>&nbsp;&nbsp;{record.text} {record.postedBy._id === state._id && <i className="material-icons" style={{float:"right"}} onClick={()=>deletecomment(record.postedBy._id)}>delete</i>}</h6>
+                                    <h6 className="com" key={record._id}><span style={{fontWeight:"bold"}}>{record.postedBy.name}&nbsp;</span>{record.text}</h6>
                                    )
                                })
                            }</div>:""}
@@ -174,22 +184,50 @@ const toogle=()=>{
                             //    console.log(e.target[0].value)
                             postComment(e.target[0].value,item._id)
                            }}>
-                           <input type="text"  placeholder="add comment"></input>
+                           <input type="text"  placeholder={`add comment as ${state.name}...`}></input>
                            </form>
                         </div>
+            
                    </div>
+                        
 
                     )
+                        
                 })
-               
             }
-             
-           
-           
-           
+            
+         </>    
+        </div>
+      <>
+          
+          <div class=" card1">
+            <h5 class="header" style={{marginTop:"52px"}}>List of following</h5>
+            {user.length===0?<Spinner size="big" lineSize={12} lineFgColor="#009999" fontSize={20} message="Loading..."  />:
+            user.map(users=>{ return(
+            <div class="card horizontal">
+        
+              <div class="card-image">
+                <img style={{width:"60px",height:"60px",borderRadius:"160px",marginTop:"10px",marginLeft:"5px"}}  src={users.pic}/>
+              </div>
+              <Link to={users._id !== state._id?"/profile/"+ users._id:"/profile"}>
+              <div class="card-stacked">
+                <div class="card-content">
+                  <p style={{fontWeight:"bold",textAlign:"left",marginTop:"0px"}}>{users.name}</p>
+                </div>
+              </div>
+              </Link>
+            
+            </div>
+            
+         )
+        })}
+          </div>
+          
+        </>
+        
+
       </div>
-      :<div className="noPost">no post found...</div>}
-      </>
+      
     )
    
 }

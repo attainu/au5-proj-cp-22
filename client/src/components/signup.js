@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import {Link,useHistory} from 'react-router-dom'
+import Spinner from 'reactjs-simple-spinner'
 import M from 'materialize-css'
 
 const Signup =()=>{
@@ -10,11 +11,11 @@ const Signup =()=>{
     const [image,setImage] = useState("")
     const [url,setUrl] = useState(undefined)
     const [show,showPass] = useState("password")
+    const [sub,submit] = useState(false)
     useEffect(()=>{
         if(url){
             uploadfields()
         }
-
     },[url])
 
 const uploadPic = ()=>{
@@ -22,7 +23,7 @@ const uploadPic = ()=>{
     data.append("file",image)
     data.append("upload_preset","Appogram")
     data.append("cloud_name","dpad3bwv8")
-
+    // cloudinay to save images used in application
     fetch("https://api.cloudinary.com/v1_1/dpad3bwv8/image/upload",{
         method:"POST",
         body:data
@@ -35,18 +36,25 @@ const uploadPic = ()=>{
     })
 }
 const uploadfields=()=>{
+    // username validation
     if(!/^(?=.*[a-z][a-z\-0-9])(?=.)(?=.{4,})/.test(name)){
+     
         M.toast({html: 'username can contain mininum 4 characters,special characters,numbers,alphabets',classes:"#b71c1c red darken-4"})
         return
     }
+    // email validation
     if(!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)){
+       
         M.toast({html: 'invalid email',classes:"#b71c1c red darken-4"})
         return
     }
+    // password validation
     if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{4,})/.test(password)){
+        
         M.toast({html: 'password must contain minimum 4 characters , special character ,Number and Capital letter',classes:"#b71c1c red darken-4"})
         return
     }
+    // signup 
     fetch("/signup",{
         method:"post",
         headers:{
@@ -67,42 +75,35 @@ const uploadfields=()=>{
             M.toast({html: 'Please enter all the fields',classes:"#b71c1c red darken-4"})
         }
         else{
+            
             M.toast({html:data.message,classes:"#43a047 green darken-1"})
             history.push('/login')
+            submit(true)
         }
        
     }).catch(err=>{
         console.log(err)
-        // M.toast({html: 'email already exists',classes:"#b71c1c red darken-4"})
     })
-
-
 }
-
+// function to submit data with image and without image
 const PostData =()=>{
-    
     if(image){
-        
         uploadPic();
-        
         
     }
     else{
         uploadfields()
         
     }
-
 }
-
+// for show password toggle 
 const pass=()=>{
     showPass(!show)
 }
-
-
-    return(
-      <div className="mycard">
+return(
+      <div className="mycard2">
         <div  className="card auth-card input-field">
-            <h2>Appogram</h2>
+            <h2 className="h2">Appogram</h2>
             <input type="text"
             placeholder="username"
             value ={name}
@@ -125,7 +126,7 @@ const pass=()=>{
              </label>
              </p>
             <div className="signup file-field input-field">
-                <div className="btn waves-effect waves-light #d81b60 blue darken-1">
+                <div className="btn waves-effect waves-light #26a69a teal lighten-1">
                   <span>Upload pic</span>
                   <input type="file" onChange={(e)=>setImage(e.target.files[0])}/>
                 </div>
@@ -133,23 +134,19 @@ const pass=()=>{
                     <input className="file-path validate" type="text" />
                 </div>
             </div>
-            <button className="btn waves-effect waves-light #d81b60 pink darken-1"
+            {sub===false?<button className=" btn waves-effect waves-light #26a69a teal lighten-1"
+            style={{marginRight:"10px",width:"150px",borderRadius:"5px"}}
             onClick = {()=>PostData()} disabled={!email || !name || !password }>
                 Signup
-    
-            </button> 
+            </button>:<Spinner size="medium" message="Loading..." /> }
            
-            
             <p>
                Already have an account?&nbsp;&nbsp;
                 <Link to="/login"><mark>Login</mark></Link>
             </p>
-
-        
         </div>
       </div>
     )
-
 }
 
 export default Signup

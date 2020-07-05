@@ -2,29 +2,39 @@ import React,{useState,useContext, useEffect} from 'react'
 import {Link,useHistory} from 'react-router-dom'
 import M from 'materialize-css'
 import FacebookLogin from 'react-facebook-login';
+import Spinner from 'reactjs-simple-spinner'
 import axios from 'axios'
 import {UserContext} from '../App'
 
 const Login =()=>{
-    const {state,dispatch} = useContext(UserContext)
+    const {dispatch} = useContext(UserContext)
     const history = useHistory()
     const [email,setEmail] = useState("")
     const [password,setPassword] = useState("")
     const [show,showPass] = useState("password")
+    const [sub,submit] = useState(false)
+
+    // validation for input field
     const PostData =()=>{
+       
+        // email validation
         if(!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)){
             M.toast({html: 'invalid email',classes:"#b71c1c red darken-4"})
             return
         }
+        
+        
+        // password validation
         if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{4,})/.test(password)){
             M.toast({html: 'password must contain minimum 4 characters , special character ,Number and Capital letter',classes:"#b71c1c red darken-4"})
             return
         }
+        
+        // login api
         fetch("/login",{
             method:"post",
             headers:{
                 "content-Type":"application/json",
-                // "Authorization":"Bearer "+localStorage.getItem("jwt")
             },
             body:JSON.stringify({
                 email,
@@ -37,29 +47,35 @@ const Login =()=>{
                M.toast({html: 'Invalid email/password',classes:"#b71c1c red darken-4"})
             }
             else{
+                
                 localStorage.setItem("jwt",data.token)
                 localStorage.setItem("user",JSON.stringify(data.user))
                 dispatch({type:"USER",payload:"data.user"})
                 M.toast({html:"signed in successfully",classes:"#43a047 green darken-1"})
                 history.push('/')
+                submit(true)
                 window.location.reload(true)
             }
         }).catch(err=>{
             console.log(err)
         })
-    
     }
     
-
+    // Facebook login http://localhost:5000
     const responseFacebook=(response)=>{
         console.log(response)
         axios({
-            method:"post",
-            url:"http://localhost:5000/facebookLogin",
-            data:{accessToken:response.accessToken,userID:response.userID}
+            method:"POST",
+            url:"/facebookLogin",
+            data:{
+                accessToken:response.accessToken,
+                userID:response.userID
+            }
         }).then(response =>{
+            console.log(response)
             localStorage.setItem("jwt",response.data.token)
             localStorage.setItem("user",JSON.stringify(response.data.user))
+            
             dispatch({type:"USER",payload:"response.data.user"})
             console.log("facebook login success",response)
             M.toast({html:"signed in successfully",classes:"#43a047 green darken-1"})
@@ -70,28 +86,23 @@ const Login =()=>{
             console.log(error.response)
         });
     }
-
+    // show password toggle
     const pass=()=>{
         showPass(!show)
     }
-
-
     return(
 
-   
-       
-      <div className="mycard">
-        
-          <div id="fb-root"></div>
-       <script async defer crossorigin="anonymous"  style={{marginLeft:"30px"}} src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v7.0&appId=1180841995600946&autoLogAppEvents=1" nonce="PDmfefqu"></script>
-       
-    
-        
-        <div className="card auth-card input-field">
-       
-
-            <h2>Appogram</h2>
-            
+    <div className="mycard2">
+        <div id="fb-root"></div>
+        <script async defer crossorigin="anonymous"  
+        style={{marginLeft:"30px"}} 
+        src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v7.0&appId=1180841995600946&autoLogAppEvents=1" 
+        nonce="PDmfefqu">
+        </script>
+        <div  className="container" style={{flex:'1',backgroundImage:"cover",height:"100%",width:"100%",marginTop:"-10px"}}
+         styles={{ backgroundImage:`url(${Image})` }}>
+       <div className="card auth-card input-field">
+           <h2 className="h2">Appogram</h2>
             <input type="text"
             placeholder="email"
             value ={email}
@@ -101,43 +112,38 @@ const Login =()=>{
             placeholder="password"
             value ={password}
             onChange = {(e)=>setPassword(e.target.value)}
-            
-           />
+            />
             <p>
              <label style={{float:"left"}}>
              <input type="checkbox" onClick={()=>pass()} />
              <span>Show password</span>
              </label>
              </p>
-             <button className="login btn waves-effect waves-light #3949ab indigo darken-1"
+           
+            {sub?<Spinner size="medium" message="Loading..." />:<button className="login btn waves-effect waves-light #26a69a teal lighten-1"
             onClick = {()=>PostData()} disabled={!email  || !password }>
                 Login
-    
-            </button>
+            </button>}
             <p>
                 Dont have an account?&nbsp;&nbsp;
                 <Link to="/signup"><mark>Signup</mark></Link>
             </p>
             <p>
-                {/* Dont have an account?&nbsp;&nbsp; */}
                 <Link to="/reset"><mark>forgot password?</mark></Link>
             </p>
-            
+            {/* for facebook button */}
             <p className="hh">or</p>
             <FacebookLogin
              appId="1180841995600946"
              autoLoad={false}
+             disableMobileRedirect={true}
              icon="fa fa-facebook-square"  
              cssClass=" my-facebook-button-class"
              callback={responseFacebook}
              
              />
-            
-             {/* <div class="fb-login-button" data-size="medium" data-button-type="login_with" data-layout="rounded" data-auto-logout-link="false" data-use-continue-as="true" data-width=""></div> */}
-  
-        
         </div>
-        
+        </div>
       </div>
      
     )

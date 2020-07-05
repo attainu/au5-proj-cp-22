@@ -10,6 +10,7 @@ router.get("/allposts",login,(req,res)=>{
     .populate("postedBy","_id name pic")
     .populate("comments.postedBy","_id name pic")
     .populate("likes.postedBy","_id name pic")
+    .sort('-createdAt')
     .then(posts=>{
         res.json({posts})
         console.log(posts)
@@ -96,13 +97,16 @@ router.put("/comment",login,(req,res)=>{
         new:true
     }).populate("comments.postedBy","_id name")
     .populate("postedBy","_id name pic")
-      .exec((err,result)=>{
-        if(err){
-            return res.status(422).json({err:err})
-        }
-        else{
-            res.json(result)
-        }
+    //   .exec((err,result)=>{
+    //     if(err){
+    //         return res.status(422).json({err:err})
+    //     }
+    //     else{
+    //         res.json(result)
+    //     }
+    // })
+    .then(result=>{
+        res.json(result)
     })
 })
 
@@ -128,6 +132,19 @@ router.delete("/deletepost/:postId",login,(req,res)=>{
     })
 })
 
+router.get("/post/:postId",login,(req,res)=>{
+    Post.findOne({_id:req.params.postId})
+    .populate("postedBy","_id pic")
+             .then(result=>{
+                 res.json(result)
+             }).catch(err=>{
+
+                 console.log(err)
+             })
+       }
+    )
+
+
 
 
 router.get("/allpostsofFollowing",login,(req,res)=>{
@@ -135,6 +152,7 @@ router.get("/allpostsofFollowing",login,(req,res)=>{
     .populate("postedBy","_id name pic")
     .populate("comments.postedBy","_id name pic")
     .populate("likes.postedBy","_id name pic")
+    .sort('-createdAt')
     .then(posts=>{
         res.json({posts})
         console.log(posts)
@@ -143,11 +161,5 @@ router.get("/allpostsofFollowing",login,(req,res)=>{
         console.log(err)
     })
 })
-
-
-
-
-
-
 
 module.exports = router

@@ -1,30 +1,42 @@
 const express = require('express')
-const router = express.Router()
 const mongoose = require('mongoose')
 const login = require('../middleware/login')
 const Post = mongoose.model("Post")
 const User =  mongoose.model("user")
+const Message = mongoose.model('message')
+const router = express.Router()
 
 
-router.get('/user/:id',login,(req,res)=>{
-   User.findOne({_id:req.params.id})
-   .select("-password")
-   .then(user=>{
-      Post.find({postedBy:req.params.id})
-      .populate("postedBy","_id name")
-      .exec((err,posts)=>{
-          if(err){
-              return res.status(422).json({error:err})
-          }
-          else{
-              res.json({user,posts})
-          }
-      })
 
-   }).catch(err=>{
-    return res.status(404).json({error:"user not found"})
+
+router.get("/following",login,(req,res)=>{
+    User.find({_id:req.User.following })
+    .populate("User","_id name email pic")
+    .select('-password ')
+    .sort('-createdAt')
+    .then(user=>{
+        res.json({user})
+        console.log("users",user)
+    }).catch(err=>{
+        console.log(err)
+    })
+
 })
+
+router.get("/followers",login,(req,res)=>{
+    User.find({_id:req.User.followers })
+    .populate("User","_id name email pic")
+    .select('-password ')
+    .sort('-createdAt')
+    .then(user=>{
+        res.json({user})
+        console.log("users",user)
+    }).catch(err=>{
+        console.log(err)
+    })
+
 })
+
 
 router.put('/follow',login,(req,res)=>{
     User.findByIdAndUpdate(req.body.followId,{
@@ -38,7 +50,7 @@ router.put('/follow',login,(req,res)=>{
         User.findByIdAndUpdate(req.User._id,{
             $push:{following:req.body.followId},
             
-        },{new:true}).select("-password").then(result=>{
+        },{new:true}).populate('following','_id name email').populate('followers','_id name email').select("-password").then(result=>{
             res.json(result)
         }).catch(err=>{
             return res.status(422).json({err:err})
@@ -58,13 +70,67 @@ router.put('/unfollow',login,(req,res)=>{
         User.findByIdAndUpdate(req.User._id,{
             $pull:{following:req.body.unfollowId},
             
-        },{new:true}).select("-password").then(result=>{
+        },{new:true}).populate('following','_id name email').populate('followers','_id name email').select("-password").then(result=>{
             res.json(result)
         }).catch(err=>{
             return res.status(422).json({err:err})
         })
     })
 })
+
+router.get("/recomendation",login,(req,res)=>{
+    User.find({_id:{$ne:req.User._id}})
+    .populate("User","_id name email pic ")
+    .populate("User following ","_id name email ")
+    .populate("followers","_id name email pic ")
+    .select('-password')
+    .sort('-createdAt')
+    .then(users =>{
+        
+        res.json({users})
+    })
+    .catch(err=>{
+        console.log(err)
+    })
+
+})
+//{$and:[{following:{$ne:req.User.following._id, $exists: true }},{ _id: {$ne:req.User._id}}] }
+router.get('/user/:id',login,(req,res)=>{
+   User.findOne({_id:req.params.id})
+   .select("-password")
+   .then(user=>{
+
+      Post.find({postedBy:req.params.id})
+      .populate("postedBy","_id name pic")
+      .exec((err,posts)=>{
+          if(err){
+              return res.status(422).json({error:err})
+          }
+          else{
+               res.json({user,posts})
+          }
+      })
+
+   }).catch(err=>{
+    return res.status(404).json({err:"user not found"})
+})
+})
+
+router.get("/Otherfollow/:id",login,(req,res)=>{
+    User.findOne({_id:req.params.id })
+    .populate("following","_id name email pic")
+    .populate("followers","_id name email pic")
+    .select('-password ')
+    .sort('-createdAt')
+    .then(user=>{
+        res.json({user})
+        console.log("users",user)
+    }).catch(err=>{
+        console.log(err)
+    })
+
+})
+
 
 router.put("/updatePic/:id",login,(req,res)=>{
     User.findByIdAndUpdate(req.User._id,{$set:{pic:req.body.pic}},{new:true},
@@ -110,5 +176,18 @@ router.delete("/deleteuser/:userId",login,(req,res)=>{
        }
     })
 })
+
+router.post("/search-users",(req,res)=>{
+    let userPattern = new RegExp("^"+req.body.query)
+    User.find({name:{$regex:userPattern}})
+    .select("_id name pic email")
+    .then(user=>{
+        res.json({user})
+    }).catch(err=>{
+        console.log(err)
+    })
+})
+
+
 
 module.exports = router

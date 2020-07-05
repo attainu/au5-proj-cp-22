@@ -19,11 +19,11 @@ const userSchema = new mongoose.Schema({
    expireToken:Date,
     pic:{
        type:String,
-       default:"https://res.cloudinary.com/dpad3bwv8/image/upload/v1592748617/default_qgqx61.webp"
+       default:"https://res.cloudinary.com/dpad3bwv8/image/upload/v1593763032/d_dicqns.png"
     },
     followers:[{type:ObjectId,ref:"user"}],
     following:[{type:ObjectId,ref:"user"}]
 
-})
+},{timestamps:true})
 
 mongoose.model("user",userSchema)

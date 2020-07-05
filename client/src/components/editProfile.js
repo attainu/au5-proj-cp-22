@@ -91,10 +91,7 @@ const uploadfields=()=>{
         console.log(err)
         // M.toast({html:data.error,classes:"#b71c1c red darken-4"})
     })
-
-
 }
-
 const PostData =()=>{
     if(image){
         return(
@@ -108,26 +105,9 @@ const PostData =()=>{
 
 }
 
-// "/deleteuser/:userId"
-
-const deleteUser = (userId) =>{
-    fetch(`/deleteuser/${userId}`,{
-        method:"delete",
-        headers:{
-            "Authorization":"Bearer "+localStorage.getItem("jwt")
-        }
-    }).then(res=>res.json())
-    .then(result =>{
-        console.log(result)
-        const newData = data.filter(item=>{
-            return item._id !==result._id
-        })
-        setData(newData)
-    })
-}
-
     return(
       <div className="mycard">
+          <h2>Edit profile</h2>
         <div className="card auth-card input-field">
             {/* <h2>Update profile</h2> */}
             <input type="text"
@@ -149,13 +129,12 @@ const deleteUser = (userId) =>{
                     <input className="file-path validate" type="text" />
                 </div>
             </div>
-            <button className="btn waves-effect waves-light #d81b60 blue darken-1"
+            <button className="btn waves-effect waves-light #26a69a teal lighten-1"
             onClick = {()=>PostData()} disabled={!name||!email}>
                 Update
             </button>
         
         </div>
-        <button onClick={()=>deleteUser(state._id)}>delete account</button>
       </div>
     )
 

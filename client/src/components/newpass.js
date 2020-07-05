@@ -45,41 +45,27 @@ const Login =()=>{
         })
     
     }
-
-    const pass=()=>{
+const pass=()=>{
         showPass(!show)
-    }
-
+}
 
     return(
-
-   
-       
-      <div className="mycard">
-        
-          <div id="fb-root"></div>
-       <script async defer crossorigin="anonymous"  style={{marginLeft:"30px"}} src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v7.0&appId=1180841995600946&autoLogAppEvents=1" nonce="PDmfefqu"></script>
-       
-    
+       <div className="mycard">
         
         <div className="card auth-card input-field">
-       
-
             <h2>Appogram</h2>
-            
             <input type={show?"password":"text"}
             placeholder="enter new password"
             value ={password}
             onChange = {(e)=>setPassword(e.target.value)}
-            
-           />
+            />
             <p>
              <label style={{float:"left"}}>
              <input type="checkbox" onClick={()=>pass()} />
              <span>Show password</span>
              </label>
              </p>
-             <button className="login btn waves-effect waves-light #3949ab indigo darken-1"
+             <button className="login btn waves-effect waves-light #26a69a teal lighten-1"
             onClick = {()=>PostData()} >
                 update password
     
